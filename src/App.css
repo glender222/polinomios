@@ -277,3 +277,53 @@ input:focus {
     margin: 10px 0;
   }
 }
+
+/* Añadir estos nuevos estilos al archivo App.css existente */
+
+.notation-selector {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: var(--border-radius);
+}
+
+.notation-selector p {
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.notation-display {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.notation-text {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* Añadir estos estilos para mejorar la visualización de árboles en las diferentes notaciones */
+.tree-notation-infix .tree-node.operator,
+.tree-notation-prefix .tree-node.operator,
+.tree-notation-postfix .tree-node.operator {
+  transition: all 0.5s ease;
+}
+
+/* Estilos específicos para notación prefija */
+.tree-notation-prefix .tree-node.operator {
+  background-color: #ffb74d; /* Color diferente para operadores en notación prefija */
+}
+
+/* Estilos específicos para notación postfija */
+.tree-notation-postfix .tree-node.operator {
+  background-color: #aed581; /* Color diferente para operadores en notación postfija */
+}
