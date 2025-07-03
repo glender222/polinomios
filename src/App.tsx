@@ -7,6 +7,7 @@ import TreeVisualizer from './components/TreeVisualizer';
 import PolynomialKeyboard from './components/PolynomialKeyboard';
 import TraversalAnimation from './components/TraversalAnimation';
 import ThemeToggle from './components/ThemeToggle';
+import ExportPanel from './components/ExportPanel';
 import './App.css';
 
 function App() {
@@ -202,7 +203,19 @@ function App() {
         {treeRoot && !isEvaluating && (
           <>
             <section className="visualization-section" aria-labelledby="tree-heading">
-              <h2 id="tree-heading">Árbol Binario Generado</h2>
+              <div className="section-header">
+                <h2 id="tree-heading">Árbol Binario Generado</h2>
+                <ExportPanel 
+                  polynomial={polynomialInput}
+                  tree={treeRoot}
+                  evaluation={isEvaluating && result !== null ? {
+                    xValue,
+                    traversalType,
+                    steps: traversalSteps,
+                    result
+                  } : undefined}
+                />
+              </div>
               <TreeVisualizer root={treeRoot} />
             </section>
             

@@ -137,3 +137,82 @@
   0% { transform: scale(1.2); }
   100% { transform: scale(1.3); }
 }
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .tree-visualizer {
+    height: 300px;
+    font-size: 14px;
+  }
+
+  .tree-node {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .tree-title {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .traversal-type {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .children-wrapper {
+    margin-top: 10px;
+  }
+
+  .child-wrapper {
+    margin: 0 8px;
+  }
+
+  .branch {
+    height: 15px;
+    top: -15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tree-visualizer {
+    height: 250px;
+  }
+
+  .tree-node {
+    width: 35px;
+    height: 35px;
+    font-size: 11px;
+  }
+
+  .tree-title {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .traversal-type {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .children-wrapper {
+    margin-top: 8px;
+  }
+
+  .child-wrapper {
+    margin: 0 6px;
+  }
+
+  .branch {
+    height: 12px;
+    top: -12px;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+  .tree-visualizer {
+    height: 200px;
+  }
+}

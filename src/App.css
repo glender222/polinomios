@@ -186,12 +186,36 @@ input:focus {
   box-shadow: var(--box-shadow);
 }
 
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: var(--primary-dark);
+}
+
+[data-theme="dark"] .section-header h2 {
+  color: var(--primary-color);
+}
+
 .visualization-section h2,
 .evaluation-section h2,
 .animation-section h2 {
   color: var(--primary-dark);
   margin-bottom: 20px;
   text-align: center;
+}
+
+/* Override for headers inside section-header */
+.section-header h2 {
+  text-align: left;
+  margin-bottom: 0;
 }
 
 .evaluation-controls {
@@ -390,13 +414,136 @@ select:focus {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
+/* Responsive styles */
 @media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+
+  .app-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+
+  .app-description {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+
+  .app-main {
+    gap: 20px;
+  }
+
+  .input-section,
+  .visualization-section,
+  .evaluation-section,
+  .animation-section {
+    padding: 15px;
+    margin: 0;
+  }
+
   .evaluation-controls {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 15px;
   }
   
   .radio-group {
-    margin: 10px 0;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .radio-group legend {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .input-group {
+    justify-content: space-between;
+  }
+
+  .x-input {
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  .evaluate-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .tree-visualizer {
+    height: 300px;
+    font-size: 14px;
+  }
+
+  .tree-node {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .final-result {
+    padding: 15px;
+  }
+
+  .result-value {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 5px;
+  }
+
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .input-section,
+  .visualization-section,
+  .evaluation-section,
+  .animation-section {
+    padding: 10px;
+  }
+
+  .tree-visualizer {
+    height: 250px;
+  }
+
+  .tree-node {
+    width: 35px;
+    height: 35px;
+    font-size: 11px;
+  }
+
+  .validation-suggestions,
+  .input-suggestions {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .error-message,
+  .validation-warning {
+    font-size: 13px;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .tree-visualizer {
+    height: 200px;
+  }
+  
+  .app-header h1 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+  
+  .app-description {
+    font-size: 13px;
   }
 }

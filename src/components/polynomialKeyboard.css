@@ -117,3 +117,73 @@
 .operators-column .key, .specials-column .key {
   flex-grow: 1;
 }
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .polynomial-keyboard {
+    padding: 10px;
+    margin-top: 15px;
+  }
+
+  .keyboard-section {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .keyboard-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .key {
+    padding: 12px 8px;
+    font-size: 16px;
+    min-width: 40px;
+  }
+
+  .action-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .clear-key,
+  .submit-key {
+    flex-grow: 1;
+    padding: 12px;
+  }
+
+  .operators-column,
+  .specials-column {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .operators-column .key,
+  .specials-column .key {
+    flex: 1;
+    margin: 0 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .polynomial-keyboard {
+    padding: 8px;
+  }
+
+  .keyboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .key {
+    padding: 10px 6px;
+    font-size: 14px;
+    min-width: 35px;
+  }
+
+  .operators-column .key,
+  .specials-column .key {
+    font-size: 13px;
+    padding: 8px 4px;
+  }
+}
