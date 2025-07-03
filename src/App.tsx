@@ -6,6 +6,7 @@ import { TreeConverter } from './services/TreeConverter';
 import TreeVisualizer from './components/TreeVisualizer';
 import PolynomialKeyboard from './components/PolynomialKeyboard';
 import TraversalAnimation from './components/TraversalAnimation';
+import NotationDisplay from './components/NotationDisplay';
 import './App.css';
 
 // Tipo para la notación del árbol
@@ -198,6 +199,8 @@ function App() {
                 root={treeRoot}
                 notationType={treeNotation}
               />
+            <NotationDisplay root={originalTree} />
+
             </section>
             
             <section className="evaluation-section">

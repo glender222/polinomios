@@ -37,6 +37,11 @@ export class PolynomialParser {
           i++;
         }
         this.tokens.push(number);
+        
+        // Verificar si hay una variable después del número (multiplicación implícita)
+        if (i < expression.length && /[a-zA-Z]/.test(expression[i])) {
+          this.tokens.push('*'); // Insertar operador de multiplicación implícita
+        }
         continue;
       }
       
@@ -44,6 +49,11 @@ export class PolynomialParser {
       if (/[a-zA-Z]/.test(char)) {
         this.tokens.push(char);
         i++;
+        
+        // Verificar si hay un número después de la variable (multiplicación implícita)
+        if (i < expression.length && /[0-9]/.test(expression[i])) {
+          this.tokens.push('*'); // Insertar operador de multiplicación implícita
+        }
         continue;
       }
       

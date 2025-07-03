@@ -87,4 +87,52 @@ export class TreeConverter {
       return tree.value;
     }
   }
+  
+  /**
+   * Genera una cadena de texto con la expresión en notación infija
+   */
+  static toInfixString(tree: TreeNode | null): string {
+    if (!tree) return '';
+    
+    if (tree.type === 'operator') {
+      const leftStr = this.toInfixString(tree.left);
+      const rightStr = this.toInfixString(tree.right);
+      
+      // Determinar si se necesitan paréntesis basado en la precedencia
+      const needsParenthesesLeft = 
+        tree.left?.type === 'operator' && 
+        this.getPrecedence(tree.value) > this.getPrecedence(tree.left.value);
+        
+      const needsParenthesesRight = 
+        tree.right?.type === 'operator' && 
+        (this.getPrecedence(tree.value) > this.getPrecedence(tree.right.value) ||
+         (this.getPrecedence(tree.value) === this.getPrecedence(tree.right.value) && 
+          (tree.value === '-' || tree.value === '/')));
+      
+      const left = needsParenthesesLeft ? `(${leftStr})` : leftStr;
+      const right = needsParenthesesRight ? `(${rightStr})` : rightStr;
+      
+      return `${left} ${tree.value} ${right}`;
+    } else {
+      return tree.value;
+    }
+  }
+  
+  /**
+   * Método auxiliar para determinar la precedencia de operadores
+   */
+  private static getPrecedence(operator: string): number {
+    switch (operator) {
+      case '+':
+      case '-':
+        return 1;
+      case '*':
+      case '/':
+        return 2;
+      case '^':
+        return 3;
+      default:
+        return 0;
+    }
+  }
 }

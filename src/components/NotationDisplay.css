@@ -1,0 +1,70 @@
+.notation-display {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: var(--box-shadow);
+}
+
+.notation-display h3 {
+  color: var(--primary-dark);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.notation-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notation-item {
+  padding: 10px;
+  border-radius: var(--border-radius);
+  background-color: #f5f5f5;
+  transition: all 0.3s ease;
+}
+
+.notation-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notation-label {
+  font-weight: bold;
+  color: var(--primary-dark);
+  margin-bottom: 5px;
+}
+
+.notation-text {
+  font-family: 'Courier New', monospace;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+}
+
+.notation-text.infix {
+  border-left: 4px solid var(--primary-color);
+}
+
+.notation-text.prefix {
+  border-left: 4px solid var(--accent-color);
+}
+
+.notation-text.postfix {
+  border-left: 4px solid var(--success-color);
+}
+
+@media (max-width: 768px) {
+  .notation-container {
+    flex-direction: column;
+  }
+  
+  .notation-item {
+    width: 100%;
+  }
+}
