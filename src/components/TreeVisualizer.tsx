@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { type TreeNode } from '../models/TreeNode';
 import './TreeVisualizer.css';
 
@@ -14,6 +14,18 @@ const TreeVisualizer: React.FC<TreeVisualizerProps> = ({
   traversalType = null
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Funciones auxiliares para calcular dimensiones del árbol
+  const getTreeHeight = useCallback((node: TreeNode | null): number => {
+    if (!node) return 0;
+    return 1 + Math.max(getTreeHeight(node.left), getTreeHeight(node.right));
+  }, []);
+  
+  const getTreeWidth = useCallback((node: TreeNode | null): number => {
+    if (!node) return 0;
+    if (!node.left && !node.right) return 1;
+    return getTreeWidth(node.left) + getTreeWidth(node.right);
+  }, []);
   
   useEffect(() => {
     if (!containerRef.current || !root) return;
@@ -36,21 +48,9 @@ const TreeVisualizer: React.FC<TreeVisualizerProps> = ({
         treeContainer.style.transform = `scale(${scale})`;
       }
     }
-  }, [root]);
+  }, [root, getTreeHeight, getTreeWidth]);
   
   if (!root) return <div className="empty-tree">No hay árbol para mostrar</div>;
-  
-  // Funciones auxiliares para calcular dimensiones del árbol
-  function getTreeHeight(node: TreeNode | null): number {
-    if (!node) return 0;
-    return 1 + Math.max(getTreeHeight(node.left), getTreeHeight(node.right));
-  }
-  
-  function getTreeWidth(node: TreeNode | null): number {
-    if (!node) return 0;
-    if (!node.left && !node.right) return 1;
-    return getTreeWidth(node.left) + getTreeWidth(node.right);
-  }
   
   const renderNode = (node: TreeNode | null) => {
     if (!node) return null;

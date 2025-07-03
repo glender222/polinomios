@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { type TreeNode } from './models/TreeNode';
 import { PolynomialParser } from './services/PolynomialParser';
 import { TreeTraversal, type TraversalStep } from './services/TreeTraversal';

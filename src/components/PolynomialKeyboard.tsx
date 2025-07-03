@@ -1,5 +1,5 @@
 import React from 'react';
-import './PolynomialKeyboard.css';
+import './polynomialKeyboard.css';
 
 interface PolynomialKeyboardProps {
   onKeyPress: (key: string) => void;
