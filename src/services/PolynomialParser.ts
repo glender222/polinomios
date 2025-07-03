@@ -37,6 +37,11 @@ export class PolynomialParser {
           i++;
         }
         this.tokens.push(number);
+        
+        // Multiplicación implícita: número seguido de variable o paréntesis
+        if (i < expression.length && (/[a-zA-Z]/.test(expression[i]) || expression[i] === '(')) {
+          this.tokens.push('*');
+        }
         continue;
       }
       
@@ -44,11 +49,28 @@ export class PolynomialParser {
       if (/[a-zA-Z]/.test(char)) {
         this.tokens.push(char);
         i++;
+        
+        // Multiplicación implícita: variable seguida de variable o paréntesis
+        if (i < expression.length && (/[a-zA-Z]/.test(expression[i]) || expression[i] === '(')) {
+          this.tokens.push('*');
+        }
         continue;
       }
       
-      // Operadores y paréntesis
-      if (['+', '-', '*', '/', '^', '(', ')'].includes(char)) {
+      // Paréntesis de cierre seguido de número, variable o paréntesis de apertura
+      if (char === ')') {
+        this.tokens.push(char);
+        i++;
+        
+        // Multiplicación implícita después de paréntesis de cierre
+        if (i < expression.length && (/[0-9a-zA-Z]/.test(expression[i]) || expression[i] === '(')) {
+          this.tokens.push('*');
+        }
+        continue;
+      }
+      
+      // Otros operadores y paréntesis de apertura
+      if (['+', '-', '*', '/', '^', '('].includes(char)) {
         this.tokens.push(char);
         i++;
         continue;
@@ -57,6 +79,49 @@ export class PolynomialParser {
       // Ignorar otros caracteres
       i++;
     }
+    
+    // Post-procesamiento para manejar casos especiales
+    this.postProcessTokens();
+  }
+  
+  private static postProcessTokens(): void {
+    const processed: string[] = [];
+    
+    for (let i = 0; i < this.tokens.length; i++) {
+      const token = this.tokens[i];
+      const prevToken = processed[processed.length - 1];
+      
+      // Manejar signos negativos al inicio o después de operadores/paréntesis
+      if (token === '-' && (i === 0 || ['+', '-', '*', '/', '^', '('].includes(prevToken))) {
+        // Es un signo negativo, no una resta
+        if (i + 1 < this.tokens.length) {
+          const nextToken = this.tokens[i + 1];
+          if (/[0-9]/.test(nextToken)) {
+            // Número negativo
+            processed.push('-' + nextToken);
+            i++; // Saltar el siguiente token
+          } else if (/[a-zA-Z]/.test(nextToken)) {
+            // Variable negativa: -x se convierte en -1 * x
+            processed.push('-1');
+            processed.push('*');
+          } else {
+            processed.push(token);
+          }
+        } else {
+          processed.push(token);
+        }
+      } else if (token === '+' && (i === 0 || ['+', '-', '*', '/', '^', '('].includes(prevToken))) {
+        // Signo positivo redundante al inicio o después de operadores
+        // Lo ignoramos si es al inicio, o lo tratamos como operador si no
+        if (i > 0) {
+          processed.push(token);
+        }
+      } else {
+        processed.push(token);
+      }
+    }
+    
+    this.tokens = processed;
   }
 
   private static parseExpression(): TreeNode | null {
@@ -147,8 +212,8 @@ export class PolynomialParser {
       return result;
     }
     
-    // Números
-    if (/^[0-9]+(\.[0-9]+)?$/.test(token)) {
+    // Números (incluyendo negativos)
+    if (/^-?[0-9]+(\.[0-9]+)?$/.test(token)) {
       this.position++;
       return createNode(token, 'constant');
     }
