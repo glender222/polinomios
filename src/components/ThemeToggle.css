@@ -1,0 +1,56 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 2px solid var(--primary-color);
+  border-radius: 25px;
+  background-color: transparent;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.theme-toggle:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.theme-toggle:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.theme-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.theme-text {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .theme-toggle {
+    padding: 6px 12px;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .theme-text {
+    display: none;
+  }
+  
+  .theme-icon {
+    font-size: 18px;
+  }
+}

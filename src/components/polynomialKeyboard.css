@@ -1,9 +1,14 @@
 .polynomial-keyboard {
-  background-color: #f0f0f0;
+  background-color: var(--card-background);
   border-radius: 10px;
   padding: 15px;
   margin-top: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--light-text);
+}
+
+[data-theme="dark"] .polynomial-keyboard {
+  border: 1px solid #424242;
 }
 
 .keyboard-row {
@@ -46,6 +51,12 @@
   justify-content: center;
 }
 
+.key:focus {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+  z-index: 10;
+}
+
 .key:hover {
   transform: translateY(-2px);
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -56,18 +67,33 @@
 }
 
 .digit-key {
-  background-color: #ffffff;
-  color: #333;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--light-text);
+}
+
+[data-theme="dark"] .digit-key {
+  border: 1px solid #424242;
 }
 
 .operator-key {
-  background-color: #e3f2fd;
-  color: #0d47a1;
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+[data-theme="dark"] .operator-key {
+  background-color: var(--primary-dark);
+  color: var(--primary-color);
 }
 
 .special-key {
   background-color: #f3e5f5;
   color: #6a1b9a;
+}
+
+[data-theme="dark"] .special-key {
+  background-color: #4a148c;
+  color: #ce93d8;
 }
 
 .clear-key {

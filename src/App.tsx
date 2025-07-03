@@ -6,6 +6,7 @@ import { PolynomialValidator, type ValidationResult } from './utils/validation';
 import TreeVisualizer from './components/TreeVisualizer';
 import PolynomialKeyboard from './components/PolynomialKeyboard';
 import TraversalAnimation from './components/TraversalAnimation';
+import ThemeToggle from './components/ThemeToggle';
 import './App.css';
 
 function App() {
@@ -118,6 +119,7 @@ function App() {
   
   return (
     <div className="app">
+      <ThemeToggle />
       <header className="app-header">
         <h1>Mapeador de Polinomios a Árboles Binarios</h1>
         <p className="app-description">
@@ -126,8 +128,9 @@ function App() {
         </p>
       </header>
       
-      <main className="app-main">
-        <section className="input-section">
+      <main className="app-main" role="main">
+        <section className="input-section" aria-labelledby="input-heading">
+          <h2 id="input-heading" className="sr-only">Entrada de Polinomio</h2>
           <div className="input-container">
             <label htmlFor="polynomial">Polinomio:</label>
             <div className="input-with-keyboard">
@@ -138,23 +141,36 @@ function App() {
                 onChange={(e) => setPolynomialInput(e.target.value)}
                 placeholder="Ejemplo: 3x^2 + 2x + 5"
                 className={error || (validationResult && !validationResult.isValid) ? 'input-error' : ''}
-                aria-describedby="polynomial-help"
+                aria-describedby="polynomial-help polynomial-error polynomial-suggestions"
+                aria-invalid={error || (validationResult && !validationResult.isValid) ? 'true' : 'false'}
+                autoComplete="off"
+                spellCheck="false"
               />
               
+              {/* Texto de ayuda siempre visible para lectores de pantalla */}
+              <div id="polynomial-help" className="sr-only">
+                Ingrese un polinomio matemático usando números, variables como x, y operadores +, -, *, /, ^. 
+                También puede usar paréntesis para agrupar términos.
+              </div>
+              
               {/* Mensajes de error */}
-              {error && <div className="error-message" role="alert">{error}</div>}
+              {error && (
+                <div id="polynomial-error" className="error-message" role="alert" aria-live="polite">
+                  {error}
+                </div>
+              )}
               
               {/* Mensajes de validación en tiempo real */}
               {validationResult && !validationResult.isValid && !error && (
-                <div className="validation-warning" role="alert">
+                <div className="validation-warning" role="alert" aria-live="polite">
                   {validationResult.error}
                 </div>
               )}
               
               {/* Sugerencias de validación */}
               {validationResult?.suggestions && validationResult.suggestions.length > 0 && (
-                <div className="validation-suggestions">
-                  <ul>
+                <div id="polynomial-suggestions" className="validation-suggestions" aria-live="polite">
+                  <ul aria-label="Sugerencias de validación">
                     {validationResult.suggestions.map((suggestion, index) => (
                       <li key={index}>{suggestion}</li>
                     ))}
@@ -164,9 +180,9 @@ function App() {
               
               {/* Sugerencias de corrección automática */}
               {suggestions.length > 0 && (
-                <div className="input-suggestions">
+                <div className="input-suggestions" aria-live="polite">
                   <small>💡 Consejos:</small>
-                  <ul>
+                  <ul aria-label="Consejos de entrada">
                     {suggestions.map((suggestion, index) => (
                       <li key={index}>{suggestion}</li>
                     ))}
@@ -185,13 +201,13 @@ function App() {
         
         {treeRoot && !isEvaluating && (
           <>
-            <section className="visualization-section">
-              <h2>Árbol Binario Generado</h2>
+            <section className="visualization-section" aria-labelledby="tree-heading">
+              <h2 id="tree-heading">Árbol Binario Generado</h2>
               <TreeVisualizer root={treeRoot} />
             </section>
             
-            <section className="evaluation-section">
-              <h2>Evaluación del Polinomio</h2>
+            <section className="evaluation-section" aria-labelledby="evaluation-heading">
+              <h2 id="evaluation-heading">Evaluación del Polinomio</h2>
               <div className="evaluation-controls">
                 <div className="input-group">
                   <label htmlFor="x-value">Valor de x:</label>
@@ -201,10 +217,16 @@ function App() {
                     value={xValue}
                     onChange={(e) => setXValue(Number(e.target.value))}
                     className="x-input"
+                    step="0.1"
+                    aria-describedby="x-value-help"
                   />
+                  <span id="x-value-help" className="sr-only">
+                    Ingrese el valor numérico que será usado para evaluar la variable x en el polinomio
+                  </span>
                 </div>
                 
-                <div className="radio-group">
+                <fieldset className="radio-group">
+                  <legend>Tipo de recorrido del árbol:</legend>
                   <label className={traversalType === 'pre' ? 'selected' : ''}>
                     <input
                       type="radio"
@@ -212,8 +234,12 @@ function App() {
                       value="pre"
                       checked={traversalType === 'pre'}
                       onChange={() => setTraversalType('pre')}
+                      aria-describedby="pre-order-help"
                     />
                     Pre-orden
+                    <span id="pre-order-help" className="sr-only">
+                      Recorrido pre-orden: procesa primero la raíz, luego el subárbol izquierdo, y finalmente el subárbol derecho
+                    </span>
                   </label>
                   <label className={traversalType === 'in' ? 'selected' : ''}>
                     <input
@@ -222,8 +248,12 @@ function App() {
                       value="in"
                       checked={traversalType === 'in'}
                       onChange={() => setTraversalType('in')}
+                      aria-describedby="in-order-help"
                     />
                     In-orden
+                    <span id="in-order-help" className="sr-only">
+                      Recorrido in-orden: procesa primero el subárbol izquierdo, luego la raíz, y finalmente el subárbol derecho
+                    </span>
                   </label>
                   <label className={traversalType === 'post' ? 'selected' : ''}>
                     <input
@@ -232,22 +262,33 @@ function App() {
                       value="post"
                       checked={traversalType === 'post'}
                       onChange={() => setTraversalType('post')}
+                      aria-describedby="post-order-help"
                     />
                     Post-orden
+                    <span id="post-order-help" className="sr-only">
+                      Recorrido post-orden: procesa primero el subárbol izquierdo, luego el subárbol derecho, y finalmente la raíz
+                    </span>
                   </label>
-                </div>
+                </fieldset>
                 
-                <button className="evaluate-button" onClick={handleEvaluate}>
+                <button 
+                  className="evaluate-button" 
+                  onClick={handleEvaluate}
+                  aria-describedby="evaluate-help"
+                >
                   Evaluar Polinomio
                 </button>
+                <span id="evaluate-help" className="sr-only">
+                  Ejecuta la evaluación del polinomio usando el valor de x especificado y el tipo de recorrido seleccionado
+                </span>
               </div>
             </section>
           </>
         )}
         
         {isEvaluating && traversalSteps.length > 0 && (
-          <section className="animation-section">
-            <h2>
+          <section className="animation-section" aria-labelledby="animation-heading">
+            <h2 id="animation-heading">
               Evaluación en {
                 traversalType === 'pre' ? 'Pre-orden' :
                 traversalType === 'in' ? 'In-orden' : 'Post-orden'
@@ -261,8 +302,8 @@ function App() {
             />
             
             {result !== null && (
-              <div className="final-result">
-                <h3>Resultado final: <span className="result-value">{result}</span></h3>
+              <div className="final-result" role="region" aria-labelledby="result-heading">
+                <h3 id="result-heading">Resultado final: <span className="result-value">{result}</span></h3>
                 <p>Para x = {xValue}</p>
               </div>
             )}
@@ -270,7 +311,7 @@ function App() {
         )}
       </main>
       
-      <footer className="app-footer">
+      <footer className="app-footer" role="contentinfo">
         <p>Proyecto de Matemática Discreta - Mapeador de Polinomios a Árboles Binarios</p>
       </footer>
     </div>

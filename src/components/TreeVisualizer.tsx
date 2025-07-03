@@ -58,17 +58,36 @@ const TreeVisualizer: React.FC<TreeVisualizerProps> = ({
     const isHighlighted = highlightedNodes.some(n => n.id === node.id);
     const nodeClass = `tree-node ${node.type} ${isHighlighted ? 'highlighted' : ''}`;
     
+    const getNodeAriaLabel = () => {
+      switch (node.type) {
+        case 'operator':
+          return `Operador: ${node.value}`;
+        case 'variable':
+          return `Variable: ${node.value}`;
+        case 'constant':
+          return `Constante: ${node.value}`;
+        default:
+          return `Nodo: ${node.value}`;
+      }
+    };
+    
     return (
-      <div key={node.id} className="node-wrapper">
-        <div className={nodeClass}>{node.value}</div>
+      <div key={node.id} className="node-wrapper" role="treeitem" aria-label={getNodeAriaLabel()}>
+        <div 
+          className={nodeClass}
+          tabIndex={isHighlighted ? 0 : -1}
+          aria-current={isHighlighted ? 'true' : 'false'}
+        >
+          {node.value}
+        </div>
         {(node.left || node.right) && (
-          <div className="children-wrapper">
+          <div className="children-wrapper" role="group" aria-label="Nodos hijos">
             <div className="child-wrapper">
-              {node.left && <div className="branch left-branch"></div>}
+              {node.left && <div className="branch left-branch" aria-hidden="true"></div>}
               {renderNode(node.left)}
             </div>
             <div className="child-wrapper">
-              {node.right && <div className="branch right-branch"></div>}
+              {node.right && <div className="branch right-branch" aria-hidden="true"></div>}
               {renderNode(node.right)}
             </div>
           </div>
@@ -89,7 +108,11 @@ const TreeVisualizer: React.FC<TreeVisualizerProps> = ({
           </span>
         )}
       </div>
-      <div className="tree-container">
+      <div 
+        className="tree-container" 
+        role="tree" 
+        aria-label="Visualización del árbol binario del polinomio"
+      >
         {renderNode(root)}
       </div>
     </div>

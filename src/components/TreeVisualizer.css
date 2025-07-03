@@ -7,7 +7,12 @@
   overflow: auto;
   position: relative;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .tree-visualizer {
+  background-color: #0a0a0a;
 }
 
 .tree-title {
@@ -16,15 +21,20 @@
   padding: 10px;
   font-size: 16px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-color);
 }
 
 .traversal-type {
-  background-color: #e3f2fd;
+  background-color: var(--primary-light);
   padding: 5px 10px;
   border-radius: 15px;
   font-size: 14px;
-  color: #0d47a1;
+  color: var(--primary-dark);
+}
+
+[data-theme="dark"] .traversal-type {
+  background-color: var(--primary-dark);
+  color: var(--primary-color);
 }
 
 .tree-container {
@@ -52,6 +62,12 @@
   transition: all 0.3s;
   position: relative;
   z-index: 2;
+}
+
+.tree-node:focus {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+  z-index: 4;
 }
 
 .operator {
