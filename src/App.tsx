@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { type TreeNode } from './models/TreeNode';
 import { PolynomialParser } from './services/PolynomialParser';
 import { TreeTraversal, type TraversalStep } from './services/TreeTraversal';
+import { PolynomialValidator, type ValidationResult } from './utils/validation';
 import TreeVisualizer from './components/TreeVisualizer';
 import PolynomialKeyboard from './components/PolynomialKeyboard';
 import TraversalAnimation from './components/TraversalAnimation';
@@ -16,10 +17,24 @@ function App() {
   const [result, setResult] = useState<number | null>(null);
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   
   // Limpiar errores al cambiar la entrada
   useEffect(() => {
     setError(null);
+    setValidationResult(null);
+    setSuggestions([]);
+    
+    if (polynomialInput.trim()) {
+      // Validación en tiempo real
+      const validation = PolynomialValidator.validatePolynomial(polynomialInput);
+      setValidationResult(validation);
+      
+      // Obtener sugerencias
+      const inputSuggestions = PolynomialValidator.suggestCorrections(polynomialInput);
+      setSuggestions(inputSuggestions);
+    }
   }, [polynomialInput]);
   
   const handleKeyPress = (key: string) => {
@@ -36,12 +51,17 @@ function App() {
   
   const handleParsePolynomial = () => {
     try {
-      if (!polynomialInput.trim()) {
-        setError('Por favor, ingrese un polinomio');
+      // Validar entrada
+      const validation = PolynomialValidator.validatePolynomial(polynomialInput);
+      if (!validation.isValid) {
+        setError(validation.error || 'Error de validación');
         return;
       }
       
-      const root = PolynomialParser.parsePolynomial(polynomialInput);
+      // Normalizar entrada
+      const normalizedInput = PolynomialValidator.normalizeInput(polynomialInput);
+      
+      const root = PolynomialParser.parsePolynomial(normalizedInput);
       
       if (!root) {
         setError('No se pudo generar el árbol. Verifique el formato del polinomio');
@@ -53,8 +73,10 @@ function App() {
       setResult(null);
       setIsEvaluating(false);
       setError(null);
+      setValidationResult(null);
     } catch (err) {
-      setError('Error al parsear el polinomio. Verifique el formato.');
+      const errorMessage = err instanceof Error ? err.message : 'Error al parsear el polinomio';
+      setError(errorMessage);
       console.error(err);
     }
   };
@@ -115,9 +137,42 @@ function App() {
                 value={polynomialInput}
                 onChange={(e) => setPolynomialInput(e.target.value)}
                 placeholder="Ejemplo: 3x^2 + 2x + 5"
-                className={error ? 'input-error' : ''}
+                className={error || (validationResult && !validationResult.isValid) ? 'input-error' : ''}
+                aria-describedby="polynomial-help"
               />
-              {error && <div className="error-message">{error}</div>}
+              
+              {/* Mensajes de error */}
+              {error && <div className="error-message" role="alert">{error}</div>}
+              
+              {/* Mensajes de validación en tiempo real */}
+              {validationResult && !validationResult.isValid && !error && (
+                <div className="validation-warning" role="alert">
+                  {validationResult.error}
+                </div>
+              )}
+              
+              {/* Sugerencias de validación */}
+              {validationResult?.suggestions && validationResult.suggestions.length > 0 && (
+                <div className="validation-suggestions">
+                  <ul>
+                    {validationResult.suggestions.map((suggestion, index) => (
+                      <li key={index}>{suggestion}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {/* Sugerencias de corrección automática */}
+              {suggestions.length > 0 && (
+                <div className="input-suggestions">
+                  <small>💡 Consejos:</small>
+                  <ul>
+                    {suggestions.map((suggestion, index) => (
+                      <li key={index}>{suggestion}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             
             <PolynomialKeyboard

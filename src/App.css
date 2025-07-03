@@ -103,6 +103,53 @@ input:focus {
   margin-top: 5px;
 }
 
+.validation-warning {
+  color: #ff9800;
+  font-size: 14px;
+  margin-top: 5px;
+  padding: 8px;
+  background-color: #fff3e0;
+  border-radius: 4px;
+  border-left: 4px solid #ff9800;
+}
+
+.validation-suggestions {
+  margin-top: 8px;
+  padding: 10px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.validation-suggestions ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--primary-dark);
+}
+
+.input-suggestions {
+  margin-top: 8px;
+  padding: 10px;
+  background-color: #f3e5f5;
+  border-radius: 4px;
+  border-left: 4px solid #9c27b0;
+}
+
+.input-suggestions small {
+  font-weight: bold;
+  color: #6a1b9a;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-suggestions ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #6a1b9a;
+}
+
 .visualization-section,
 .evaluation-section,
 .animation-section {
