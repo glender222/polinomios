@@ -88,9 +88,22 @@ body {
   gap: 15px;
 }
 
+.input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
 .input-container label {
   font-weight: bold;
   color: var(--primary-dark);
+  margin: 0;
+}
+
+[data-theme="dark"] .input-container label {
+  color: var(--primary-color);
 }
 
 .input-with-keyboard {
@@ -201,6 +214,41 @@ input:focus {
 }
 
 [data-theme="dark"] .section-header h2 {
+  color: var(--primary-color);
+}
+
+.visualization-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.tree-panel,
+.graph-panel {
+  background-color: var(--background-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.tree-panel h3,
+.graph-panel h3 {
+  margin: 0;
+  padding: 12px;
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  text-align: center;
+  font-size: 16px;
+}
+
+[data-theme="dark"] .tree-panel,
+[data-theme="dark"] .graph-panel {
+  background-color: #0a0a0a;
+}
+
+[data-theme="dark"] .tree-panel h3,
+[data-theme="dark"] .graph-panel h3 {
+  background-color: var(--primary-dark);
   color: var(--primary-color);
 }
 
@@ -491,6 +539,11 @@ select:focus {
 
   .result-value {
     font-size: 20px;
+  }
+
+  .visualization-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
 }
 

@@ -3,11 +3,14 @@ import { type TreeNode } from './models/TreeNode';
 import { PolynomialParser } from './services/PolynomialParser';
 import { TreeTraversal, type TraversalStep } from './services/TreeTraversal';
 import { PolynomialValidator, type ValidationResult } from './utils/validation';
+import { PolynomialHistory } from './utils/history';
 import TreeVisualizer from './components/TreeVisualizer';
+import GraphVisualizer from './components/GraphVisualizer';
 import PolynomialKeyboard from './components/PolynomialKeyboard';
 import TraversalAnimation from './components/TraversalAnimation';
 import ThemeToggle from './components/ThemeToggle';
 import ExportPanel from './components/ExportPanel';
+import HistoryPanel from './components/HistoryPanel';
 import './App.css';
 
 function App() {
@@ -70,6 +73,9 @@ function App() {
         return;
       }
       
+      // Agregar al historial
+      PolynomialHistory.addToHistory(normalizedInput);
+      
       setTreeRoot(root);
       setTraversalSteps([]);
       setResult(null);
@@ -106,7 +112,16 @@ function App() {
       
       // El resultado final será el del último paso
       if (steps.length > 0) {
-        setResult(steps[steps.length - 1].result);
+        const finalResult = steps[steps.length - 1].result;
+        setResult(finalResult);
+        
+        // Actualizar la última evaluación en el historial
+        PolynomialHistory.updateLastEvaluation(
+          polynomialInput,
+          xValue,
+          finalResult,
+          traversalType
+        );
       }
     } catch (err) {
       setError('Error al evaluar el polinomio');
@@ -133,7 +148,13 @@ function App() {
         <section className="input-section" aria-labelledby="input-heading">
           <h2 id="input-heading" className="sr-only">Entrada de Polinomio</h2>
           <div className="input-container">
-            <label htmlFor="polynomial">Polinomio:</label>
+            <div className="input-header">
+              <label htmlFor="polynomial">Polinomio:</label>
+              <HistoryPanel 
+                onSelectPolynomial={setPolynomialInput}
+                currentPolynomial={polynomialInput}
+              />
+            </div>
             <div className="input-with-keyboard">
               <input
                 id="polynomial"
@@ -204,7 +225,7 @@ function App() {
           <>
             <section className="visualization-section" aria-labelledby="tree-heading">
               <div className="section-header">
-                <h2 id="tree-heading">Árbol Binario Generado</h2>
+                <h2 id="tree-heading">Representaciones del Polinomio</h2>
                 <ExportPanel 
                   polynomial={polynomialInput}
                   tree={treeRoot}
@@ -216,7 +237,20 @@ function App() {
                   } : undefined}
                 />
               </div>
-              <TreeVisualizer root={treeRoot} />
+              
+              <div className="visualization-grid">
+                <div className="tree-panel">
+                  <h3>Árbol Binario</h3>
+                  <TreeVisualizer root={treeRoot} />
+                </div>
+                
+                <div className="graph-panel">
+                  <GraphVisualizer 
+                    tree={treeRoot}
+                    polynomial={polynomialInput}
+                  />
+                </div>
+              </div>
             </section>
             
             <section className="evaluation-section" aria-labelledby="evaluation-heading">
