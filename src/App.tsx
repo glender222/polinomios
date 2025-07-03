@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { type TreeNode } from './models/TreeNode';
+import { type TreeNode, cloneTree } from './models/TreeNode';
 import { PolynomialParser } from './services/PolynomialParser';
-import { TreeTraversal, type TraversalStep } from './services/TreeTraversal';
+import { TreeTraversal } from './services/TreeTraversal';
+import { TreeConverter } from './services/TreeConverter';
 import TreeVisualizer from './components/TreeVisualizer';
 import PolynomialKeyboard from './components/PolynomialKeyboard';
 import TraversalAnimation from './components/TraversalAnimation';
 import './App.css';
 
+// Tipo para la notación del árbol
+type TreeNotation = 'infix' | 'prefix' | 'postfix';
+
 function App() {
-  const [polynomialInput, setPolynomialInput] = useState<string>('');
-  const [xValue, setXValue] = useState<number>(0);
+  // Estados
+  const [polynomialInput, setPolynomialInput] = useState('');
+  const [xValue, setXValue] = useState(0);
   const [treeRoot, setTreeRoot] = useState<TreeNode | null>(null);
-  const [traversalSteps, setTraversalSteps] = useState<TraversalStep[]>([]);
+  const [originalTree, setOriginalTree] = useState<TreeNode | null>(null);
+  const [traversalSteps, setTraversalSteps] = useState<any[]>([]);
   const [traversalType, setTraversalType] = useState<'pre' | 'in' | 'post'>('in');
+  const [treeNotation, setTreeNotation] = useState<TreeNotation>('infix');
   const [result, setResult] = useState<number | null>(null);
-  const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
+  const [isEvaluating, setIsEvaluating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   // Limpiar errores al cambiar la entrada
@@ -22,6 +29,29 @@ function App() {
     setError(null);
   }, [polynomialInput]);
   
+  // Actualizar el árbol cuando cambia la notación
+  useEffect(() => {
+    if (!originalTree) return;
+    
+    try {
+      let newTree: TreeNode | null;
+      
+      if (treeNotation === 'prefix') {
+        newTree = TreeConverter.toPrefix(cloneTree(originalTree));
+      } else if (treeNotation === 'postfix') {
+        newTree = TreeConverter.toPostfix(cloneTree(originalTree));
+      } else {
+        newTree = cloneTree(originalTree);
+      }
+      
+      setTreeRoot(newTree);
+    } catch (err) {
+      console.error("Error al convertir el árbol:", err);
+      setTreeRoot(cloneTree(originalTree)); // Usar original como fallback
+    }
+  }, [treeNotation, originalTree]);
+  
+  // Manejadores de eventos
   const handleKeyPress = (key: string) => {
     if (key === 'BACKSPACE') {
       setPolynomialInput(prev => prev.slice(0, -1));
@@ -35,12 +65,12 @@ function App() {
   };
   
   const handleParsePolynomial = () => {
+    if (!polynomialInput.trim()) {
+      setError('Por favor, ingrese un polinomio');
+      return;
+    }
+    
     try {
-      if (!polynomialInput.trim()) {
-        setError('Por favor, ingrese un polinomio');
-        return;
-      }
-      
       const root = PolynomialParser.parsePolynomial(polynomialInput);
       
       if (!root) {
@@ -48,50 +78,45 @@ function App() {
         return;
       }
       
+      // Guardar árbol original
+      setOriginalTree(root);
+      
+      // El efecto se encargará de aplicar la notación
       setTreeRoot(root);
       setTraversalSteps([]);
       setResult(null);
       setIsEvaluating(false);
       setError(null);
     } catch (err) {
+      console.error("Error al parsear:", err);
       setError('Error al parsear el polinomio. Verifique el formato.');
-      console.error(err);
     }
   };
   
   const handleEvaluate = () => {
-    if (!treeRoot) return;
+    if (!originalTree) return;
     
     try {
-      let steps: TraversalStep[] = [];
+      let steps: any[] = [];
       
-      switch (traversalType) {
-        case 'pre':
-          steps = TreeTraversal.preOrderTraversal(treeRoot, xValue);
-          break;
-        case 'in':
-          steps = TreeTraversal.inOrderTraversal(treeRoot, xValue);
-          break;
-        case 'post':
-          steps = TreeTraversal.postOrderTraversal(treeRoot, xValue);
-          break;
+      if (traversalType === 'pre') {
+        steps = TreeTraversal.preOrderTraversal(originalTree, xValue);
+      } else if (traversalType === 'in') {
+        steps = TreeTraversal.inOrderTraversal(originalTree, xValue);
+      } else {
+        steps = TreeTraversal.postOrderTraversal(originalTree, xValue);
       }
       
       setTraversalSteps(steps);
       setIsEvaluating(true);
       
-      // El resultado final será el del último paso
       if (steps.length > 0) {
         setResult(steps[steps.length - 1].result);
       }
     } catch (err) {
+      console.error("Error al evaluar:", err);
       setError('Error al evaluar el polinomio');
-      console.error(err);
     }
-  };
-  
-  const handleAnimationComplete = () => {
-    // Podría realizar alguna acción cuando la animación termine
   };
   
   return (
@@ -132,7 +157,47 @@ function App() {
           <>
             <section className="visualization-section">
               <h2>Árbol Binario Generado</h2>
-              <TreeVisualizer root={treeRoot} />
+              
+              <div className="notation-selector">
+                <p>Seleccione el tipo de notación:</p>
+                <div className="radio-group">
+                  <label>
+                    <input
+                      type="radio"
+                      name="tree-notation"
+                      value="infix"
+                      checked={treeNotation === 'infix'}
+                      onChange={() => setTreeNotation('infix')}
+                    />
+                    Infija (natural)
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="tree-notation"
+                      value="prefix"
+                      checked={treeNotation === 'prefix'}
+                      onChange={() => setTreeNotation('prefix')}
+                    />
+                    Prefija (polaca)
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="tree-notation"
+                      value="postfix"
+                      checked={treeNotation === 'postfix'}
+                      onChange={() => setTreeNotation('postfix')}
+                    />
+                    Postfija (polaca inversa)
+                  </label>
+                </div>
+              </div>
+              
+              <TreeVisualizer
+                root={treeRoot}
+                notationType={treeNotation}
+              />
             </section>
             
             <section className="evaluation-section">
@@ -150,7 +215,7 @@ function App() {
                 </div>
                 
                 <div className="radio-group">
-                  <label className={traversalType === 'pre' ? 'selected' : ''}>
+                  <label>
                     <input
                       type="radio"
                       name="traversal"
@@ -160,7 +225,7 @@ function App() {
                     />
                     Pre-orden
                   </label>
-                  <label className={traversalType === 'in' ? 'selected' : ''}>
+                  <label>
                     <input
                       type="radio"
                       name="traversal"
@@ -170,7 +235,7 @@ function App() {
                     />
                     In-orden
                   </label>
-                  <label className={traversalType === 'post' ? 'selected' : ''}>
+                  <label>
                     <input
                       type="radio"
                       name="traversal"
@@ -201,8 +266,8 @@ function App() {
             <TraversalAnimation
               steps={traversalSteps}
               traversalType={traversalType}
-              root={treeRoot}
-              onComplete={handleAnimationComplete}
+              root={originalTree}
+              onComplete={() => {}}
             />
             
             {result !== null && (

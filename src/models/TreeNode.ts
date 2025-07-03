@@ -1,34 +1,41 @@
 export interface TreeNode {
+  id?: string;
   value: string;
+  type: 'operator' | 'variable' | 'constant';
   left: TreeNode | null;
   right: TreeNode | null;
-  type: 'operator' | 'variable' | 'constant';
-  id?: string; // Para identificación única en la visualización
 }
 
-// Función de utilidad para crear un nuevo nodo
-export function createNode(
+// Genera un ID único
+const generateId = (): string => {
+  return Math.random().toString(36).substring(2, 15);
+};
+
+// Crea un nuevo nodo de árbol
+export const createNode = (
   value: string,
   type: 'operator' | 'variable' | 'constant',
   left: TreeNode | null = null,
   right: TreeNode | null = null
-): TreeNode {
+): TreeNode => {
   return {
+    id: generateId(),
     value,
-    left,
-    right,
     type,
-    id: Math.random().toString(36).substring(2, 9) // Genera un ID único
+    left,
+    right
   };
-}
+};
 
-// Función para clonar un árbol
-export function cloneTree(node: TreeNode | null): TreeNode | null {
+// Clona un árbol completo
+export const cloneTree = (node: TreeNode | null): TreeNode | null => {
   if (!node) return null;
   
   return {
-    ...node,
+    id: node.id || generateId(),
+    value: node.value,
+    type: node.type,
     left: cloneTree(node.left),
-    right: cloneTree(node.right),
+    right: cloneTree(node.right)
   };
-}
+};

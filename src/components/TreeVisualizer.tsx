@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { type TreeNode } from '../models/TreeNode';
 import './TreeVisualizer.css';
 
+// Asegúrate de actualizar la interfaz de props
 interface TreeVisualizerProps {
   root: TreeNode | null;
   highlightedNodes?: TreeNode[];
@@ -94,9 +95,6 @@ const TreeVisualizer: React.FC<TreeVisualizerProps> = ({
     // Mapa para almacenar las posiciones de cada nodo
     const positions = new Map<string, NodePosition>();
     
-    // Calcular el ancho total del árbol
-    const totalWidth = calculateTreeWidth(rootNode);
-    
     // Calcular posiciones para todos los nodos
     positionNodes(rootNode, 0, 0, positions);
     
@@ -113,7 +111,7 @@ const TreeVisualizer: React.FC<TreeVisualizerProps> = ({
       
       if (position) {
         // Verificar si el nodo debe resaltarse
-        const isHighlighted = highlightedNodes.some(n => n.id === node.id);
+        const isHighlighted = highlightedNodes?.some(n => n.id === node.id) || false;
         
         // Añadir nodo a la lista
         nodes.push({ node, position, isHighlighted });
@@ -198,7 +196,7 @@ const TreeVisualizer: React.FC<TreeVisualizerProps> = ({
         {nodes.map(({ node, position, isHighlighted }) => (
           <div
             key={node.id}
-            className={`tree-node ${node.type} ${isHighlighted ? 'highlighted' : ''}`}
+            className={`tree-node ${node.type} ${isHighlighted ? 'highlighted' : ''} ${notationType}-node`}
             style={{
               position: 'absolute',
               left: `${position.x}px`,
